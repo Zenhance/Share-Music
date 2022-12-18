@@ -20,7 +20,14 @@ namespace Share_Music.Services.Authentication
         }
         public Task<Response<UserLoginResponseDto>> Login(UserLoginRequestDto userLoginRequest)
         {
-            throw new NotImplementedException();
+            if(userRepository.HasAny(u => u.UserName == userLoginRequest.UserName))
+            {
+                return ;
+            }
+            else
+            {
+                return (Task<Response<UserLoginResponseDto>>)Response.Error("Invalid Credentials");
+            }
         }
 
         public async Task<Response<UserSignUpResponseDto>> Signup(UserSignUpRequestDto userSignUpRequest)
@@ -51,6 +58,11 @@ namespace Share_Music.Services.Authentication
                 passwordSlat = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
+        }
+
+        private bool VerifyPassword(string password)
+        {
+
         }
     }
 }

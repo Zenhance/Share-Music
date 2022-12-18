@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
 using Share_Music.Services.Authentication;
 
@@ -36,6 +37,18 @@ namespace Share_Music.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        [HttpPost("Login")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserLoginResponseDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login([FromBody] UserLoginRequestDto userInfo)
+        {
+            if(ModelState.IsValid)
+            {
+
+            }
         }
     }
 }
