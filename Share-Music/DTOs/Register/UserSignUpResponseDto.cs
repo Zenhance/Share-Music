@@ -2,5 +2,6 @@
 {
     public class UserSignUpResponseDto
     {
+        public Guid Id { get; set; }
     }
 }
