@@ -14,10 +14,6 @@
         public string MessageType { get; set; } = string.Empty;
         public bool IsSuccess { get; set; }
 
-        public static explicit operator Response<T>(IResponse v)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public static class Response

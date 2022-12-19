@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
 using Share_Music.Services.Authentication;
@@ -47,8 +48,21 @@ namespace Share_Music.Controllers
         {
             if(ModelState.IsValid)
             {
-
+                var response = await authenticationService.Login(userInfo);
+                return Ok(response.Data);
             }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost("ValidateToken")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        public ActionResult ValidateToken()
+        {
+            return Ok(new { isValid = HttpContext.User.Identity.IsAuthenticated });
         }
     }
 }

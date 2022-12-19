@@ -50,7 +50,7 @@ namespace Share_Music.Repositories
 
         public IEnumerable<T> GetByFilter(Expression<Func<T, bool>> filterClause)
         {
-            throw new NotImplementedException();
+            return musicDbContext.Set<T>().Where(filterClause).ToList();
         }
 
         public T GetById(string id)
