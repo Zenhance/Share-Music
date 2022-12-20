@@ -22,5 +22,13 @@ namespace Share_Music.Controllers
                     HttpContext.User.FindFirstValue(ClaimTypes.Name).ToString() : string.Empty;
             }
         }
+        protected string userRole
+        {
+            get
+            {
+                return HttpContext.User.Identity.IsAuthenticated ?
+                    HttpContext.User.FindFirstValue(ClaimTypes.Role).ToString():string.Empty;
+            }
+        }
     }
 }

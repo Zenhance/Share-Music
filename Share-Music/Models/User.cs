@@ -16,5 +16,6 @@ namespace Share_Music.Models
         public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
         [Required]
         public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+        public Role Role { get; set; } = Role.User;
     }
 }

@@ -29,6 +29,17 @@
             };
         }
 
+        public static Response<T> Error<T>(string? message = null)
+        {
+            return new Response<T>
+            {
+                IsSuccess = false,
+                Data = default(T),
+                Message = message,
+                MessageType = "error"
+            };
+        }
+
         public static IResponse Error(string? message = null)
         {
             return new Response<object>

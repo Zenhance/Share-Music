@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.IdentityModel.Tokens;
-using Share_Music.Data;
 using Share_Music.DTOs;
 using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
@@ -37,12 +36,12 @@ namespace Share_Music.Services.Authentication
                 }
                 else
                 {
-                    return (Response<UserLoginResponseDto>)Response.Error("Invalid Credentials");
+                    return Response.Error<UserLoginResponseDto>("Invalid Credentials");
                 }
             }
             else
             {
-                return (Response<UserLoginResponseDto>)Response.Error("Invalid Credentials");
+                return Response.Error<UserLoginResponseDto>("Invalid Credentials");
             }
         }
 
@@ -90,7 +89,8 @@ namespace Share_Music.Services.Authentication
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("TokenSettings:Secret").Value));

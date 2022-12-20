@@ -49,7 +49,14 @@ namespace Share_Music.Controllers
             if(ModelState.IsValid)
             {
                 var response = await authenticationService.Login(userInfo);
-                return Ok(response.Data);
+                if (response.IsSuccess == true)
+                {
+                    return Ok(response.Data);
+                }
+                else
+                {
+                    return BadRequest(response.Message);
+                }
             }
             else
             {

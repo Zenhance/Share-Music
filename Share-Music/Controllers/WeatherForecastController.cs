@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Share_Music.Common.CustomAttribute;
+using Share_Music.Models;
 
 namespace Share_Music.Controllers
 {
@@ -28,7 +29,9 @@ namespace Share_Music.Controllers
             })
             .ToArray();
         }
+        
         [HttpGet("GetUserDetails")]
+        [Authorize(Role.Admin)]
         public ActionResult GetUserDeails()
         {
             return Ok(userId+userName);
