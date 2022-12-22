@@ -1,0 +1,9 @@
+﻿using EmailService.Messages;
+
+namespace EmailService.Services
+{
+    public interface IEmailSender
+    {
+        Task SendEmailAsync(MailKitMailMessage message);
+    }
+}

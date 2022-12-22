@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EmailService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -28,6 +29,7 @@ namespace Share_Music.Controllers
             if (ModelState.IsValid)
             {
                 var response = await authenticationService.Signup(userInfo);
+
                 if(response.IsSuccess==true)
                 {
                     return Ok(response.Data);

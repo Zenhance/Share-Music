@@ -1,4 +1,6 @@
-﻿using Mapster;
+﻿using EmailService.Messages;
+using EmailService.Services;
+using Mapster;
 using MapsterMapper;
 using Microsoft.IdentityModel.Tokens;
 using Share_Music.DTOs;
@@ -15,12 +17,14 @@ namespace Share_Music.Services.Authentication
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IRepository<User> userRepository;
+        private readonly IEmailSender emailSender;
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
 
-        public AuthenticationService(IRepository<User> userRepository, IMapper mapper, IConfiguration configuration)
+        public AuthenticationService(IRepository<User> userRepository,IEmailSender emailSender, IMapper mapper, IConfiguration configuration)
         {
             this.userRepository = userRepository;
+            this.emailSender = emailSender;
             this.mapper = mapper;
             this.configuration = configuration;
         }
@@ -61,6 +65,7 @@ namespace Share_Music.Services.Authentication
                 newUser.PasswordHash = passwordHash;
 
                 await userRepository.CreateAsync(newUser);
+                await emailSender.SendEmailAsync(new MailKitMailMessage(new string [] {newUser.Email }, "Verification Link" , string.Empty, null ));
 
                 return Response.Success(mapper.Map<UserSignUpResponseDto>(newUser), "User created successfully");
             }

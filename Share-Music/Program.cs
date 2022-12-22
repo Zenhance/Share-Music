@@ -1,10 +1,14 @@
+using EmailService.Configurations;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Share_Music.Common.CustomTokenProvider;
 using Share_Music.Data;
+using Share_Music.Models;
 using Share_Music.Repositories;
 using Share_Music.Services.Authentication;
 using System.Reflection;
@@ -13,6 +17,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var mappingConfig = TypeAdapterConfig.GlobalSettings;
 mappingConfig.Scan(Assembly.GetExecutingAssembly());
+
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailMailKitConfiguration>();
 
 
 // Add services to the container.
@@ -23,14 +29,22 @@ builder.Services.AddDbContext<MusicDbContext>(options =>
         builder.Configuration.GetConnectionString("musicDbDev"),
         providerOptions => providerOptions.EnableRetryOnFailure())
 );
+builder.Services.AddIdentity<User,IdentityRole> (option => {
+    option.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
+})
+    .AddDefaultTokenProviders()
+    .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");
 
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddSingleton(mappingConfig);
-builder.Services.AddScoped<IMapper, ServiceMapper>();
+builder.Services.AddSingleton(emailConfig);
 
+builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
