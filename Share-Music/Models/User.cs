@@ -6,7 +6,7 @@ namespace Share_Music.Models
 {
     public class User:IdentityUser,DbEntity
     {
-        public Guid Id { get; set; }
+        public new Guid Id { get; set; }
         [Required]
         [StringLength(50)]
         public override string UserName { get; set; } = string.Empty;
