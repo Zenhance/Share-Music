@@ -1,4 +1,5 @@
 using EmailService.Configurations;
+using EmailService.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +33,7 @@ builder.Services.AddDbContext<MusicDbContext>(options =>
 builder.Services.AddIdentity<User,IdentityRole> (option => {
     option.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
 })
+    .AddEntityFrameworkStores<MusicDbContext>()
     .AddDefaultTokenProviders()
     .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");
 
@@ -43,6 +45,7 @@ builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IEmailSender,EmailSender>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

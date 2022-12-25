@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Share_Music.Repositories
 {
-    public class BaseRepository<T> : IRepository<T> where T : DbEntity
+    public class BaseRepository<T> : IRepository<T> where T : class
     {
         private readonly MusicDbContext musicDbContext;
 

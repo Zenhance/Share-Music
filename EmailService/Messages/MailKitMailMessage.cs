@@ -11,6 +11,7 @@ namespace EmailService.Messages
     public class MailKitMailMessage
     {
         public List<MailboxAddress> To { get; set; }
+        public string? Name { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
 
@@ -19,7 +20,7 @@ namespace EmailService.Messages
         public MailKitMailMessage(IEnumerable<string> to, string subject, string content, IFormFileCollection attachments)
         {
             To = new List<MailboxAddress>();
-            To.AddRange(to.Select(x => new MailboxAddress("",x)));
+            To.AddRange(to.Select(x => new MailboxAddress(Name,x)));
             Subject = subject;
             Content = content;
             Attachments = attachments;

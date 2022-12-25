@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Share_Music.Repositories
 {
-    public interface IRepository<T> where T : DbEntity
+    public interface IRepository<T> where T : class
     {
         bool Create(IEnumerable<T> entities);
         bool Create(T entity);

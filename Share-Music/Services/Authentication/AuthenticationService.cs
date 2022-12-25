@@ -2,7 +2,9 @@
 using EmailService.Services;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using Share_Music.DTOs;
 using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
@@ -18,13 +20,15 @@ namespace Share_Music.Services.Authentication
     {
         private readonly IRepository<User> userRepository;
         private readonly IEmailSender emailSender;
+        private readonly UserManager<User> userManager;
         private readonly IMapper mapper;
         private readonly IConfiguration configuration;
 
-        public AuthenticationService(IRepository<User> userRepository,IEmailSender emailSender, IMapper mapper, IConfiguration configuration)
+        public AuthenticationService(IRepository<User> userRepository,IEmailSender emailSender, UserManager<User>userManager, IMapper mapper, IConfiguration configuration)
         {
             this.userRepository = userRepository;
             this.emailSender = emailSender;
+            this.userManager = userManager;
             this.mapper = mapper;
             this.configuration = configuration;
         }
@@ -64,8 +68,14 @@ namespace Share_Music.Services.Authentication
                 newUser.PasswordSalt = passwordSalt;
                 newUser.PasswordHash = passwordHash;
 
-                await userRepository.CreateAsync(newUser);
-                await emailSender.SendEmailAsync(new MailKitMailMessage(new string [] {newUser.Email }, "Verification Link" , string.Empty, null ));
+                var emailConfirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(newUser);
+                var emailConfirmationLink = "https://localhost:7184/api/Authentication/ConfirmEmailLink?token=" + emailConfirmationToken + "&email=" + newUser.Email;
+                var emailConfirmationMessage = new MailKitMailMessage(new string[] { newUser.Email }, "Verification Link", emailConfirmationLink , null);
+
+                await Task.WhenAll(
+                    userRepository.CreateAsync(newUser),
+                    emailSender.SendEmailAsync(emailConfirmationMessage)
+                    );
 
                 return Response.Success(mapper.Map<UserSignUpResponseDto>(newUser), "User created successfully");
             }

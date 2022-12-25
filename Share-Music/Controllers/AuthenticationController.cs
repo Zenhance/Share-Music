@@ -1,23 +1,27 @@
 ﻿using EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
+using Share_Music.Models;
 using Share_Music.Services.Authentication;
 
 namespace Share_Music.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService authenticationService;
+        private readonly UserManager<User> userManager;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(IAuthenticationService authenticationService, UserManager<User>userManager)
         {
             this.authenticationService = authenticationService;
+            this.userManager = userManager;
         }
 
         [HttpPost("Signup")]
@@ -72,6 +76,20 @@ namespace Share_Music.Controllers
         public ActionResult ValidateToken()
         {
             return Ok(new { isValid = HttpContext.User.Identity.IsAuthenticated });
+        }
+
+        [HttpGet("VerifyEmail")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> VerifyEmail(string token, string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return BadRequest();
+            var result = await userManager.ConfirmEmailAsync(user, token);
+            
+            return result.Succeeded ? Ok("Email Confirmed") : BadRequest();
         }
     }
 }

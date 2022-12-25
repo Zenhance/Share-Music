@@ -26,7 +26,7 @@ namespace EmailService.Services
         private MimeMessage CreateEmailMessage(MailKitMailMessage message)
         {
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("",config.From));
+            emailMessage.From.Add(new MailboxAddress(config.UserName,config.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
 
