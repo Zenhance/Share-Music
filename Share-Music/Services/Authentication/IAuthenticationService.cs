@@ -8,5 +8,6 @@ namespace Share_Music.Services.Authentication
     {
         public Task<Response<UserSignUpResponseDto>> Signup(UserSignUpRequestDto userSignUpResponse);
         public Task<Response<UserLoginResponseDto>> Login(UserLoginRequestDto userLoginResponse);
+        public Task<bool> IsEmailVerified(string token, string email);
     }
 }

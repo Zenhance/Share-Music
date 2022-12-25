@@ -16,12 +16,10 @@ namespace Share_Music.Controllers
     public class AuthenticationController : BaseController
     {
         private readonly IAuthenticationService authenticationService;
-        private readonly UserManager<User> userManager;
 
-        public AuthenticationController(IAuthenticationService authenticationService, UserManager<User>userManager)
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
             this.authenticationService = authenticationService;
-            this.userManager = userManager;
         }
 
         [HttpPost("Signup")]
@@ -84,12 +82,18 @@ namespace Share_Music.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> VerifyEmail(string token, string email)
         {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
+           
+            if(await authenticationService.IsEmailVerified(token,email))
+            {
+                return Ok("User Verified");
+            }
+            else
+            {
                 return BadRequest();
-            var result = await userManager.ConfirmEmailAsync(user, token);
-            
-            return result.Succeeded ? Ok("Email Confirmed") : BadRequest();
+            }
+                       
         }
+
+
     }
 }

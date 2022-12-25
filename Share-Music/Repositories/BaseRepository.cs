@@ -1,4 +1,5 @@
-﻿using Share_Music.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Share_Music.Data;
 using Share_Music.Models;
 using System.Linq.Expressions;
 
@@ -53,6 +54,11 @@ namespace Share_Music.Repositories
             return musicDbContext.Set<T>().Where(filterClause).ToList();
         }
 
+        public async Task<IEnumerable<T>> GetByFilterAsync(Expression<Func<T, bool>> filterClause)
+        {
+            return await musicDbContext.Set<T>().Where(filterClause).ToListAsync();
+        }
+
         public T GetById(string id)
         {
             throw new NotImplementedException();
@@ -73,9 +79,10 @@ namespace Share_Music.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            throw new NotImplementedException();
+            musicDbContext.Set<T>().Update(entity);
+            await musicDbContext.SaveChangesAsync();
         }
     }
 }

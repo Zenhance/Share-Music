@@ -13,6 +13,7 @@ namespace Share_Music.Repositories
         Task DeleteAsync(T entity);
         IEnumerable<T> GetAll();
         IEnumerable<T> GetByFilter(Expression<Func<T, bool>> filterClause);
+        Task<IEnumerable<T>> GetByFilterAsync(Expression<Func<T, bool>> filterClause);
         T GetById(string id);
         bool HasAny(Expression<Func<T, bool>> filterClause);
         Task Update(IEnumerable<T> entities);

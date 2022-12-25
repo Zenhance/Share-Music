@@ -81,6 +81,25 @@ namespace Share_Music.Services.Authentication
             }
         }
 
+        public async Task<bool> IsEmailVerified(string token, string email)
+        {
+            var user = await userRepository.GetByFilterAsync(u => u.Email == email);
+            if (user == null)
+                return false;
+            var result = await userManager.ConfirmEmailAsync(user.First(), token);
+            if(result.Succeeded)
+            {
+                var updatedUser = user.First();
+                updatedUser.IsVerified = true;
+                await userRepository.UpdateAsync(updatedUser);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSlat)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -122,6 +141,8 @@ namespace Share_Music.Services.Authentication
 
             return tokenHandler.WriteToken(token);
         }
+
+        
     }
 }
 
