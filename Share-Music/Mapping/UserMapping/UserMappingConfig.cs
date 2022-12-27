@@ -10,8 +10,12 @@ namespace Share_Music.Mapping.UserMapping
         public void Register(TypeAdapterConfig config)
         {
             config.NewConfig<UserSignUpRequestDto, User>()
+                .Map(dest=>dest.Id, src => Guid.NewGuid())
                 .Map(dest=> dest.UserName, src => src.UserName)
                 .Map(dest => dest.Email, src => src.Email)
+                .Map(dest => dest.SecurityStamp, src => Guid.NewGuid().ToString())
+                .Map(dest => dest.NormalizedUserName, src => src.UserName.ToUpper())
+                .Map(dest => dest.NormalizedEmail, src => src.Email.ToUpper())
                 .IgnoreNonMapped(true);
 
             config.NewConfig<User, UserSignUpResponseDto>()

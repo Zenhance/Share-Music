@@ -4,6 +4,8 @@ using EmailService.Configurations;
 using EmailService.Messages;
 using MimeKit;
 using MailKit.Net.Smtp;
+using MailKit.Security;
+using System.Net;
 
 namespace EmailService.Services
 {
@@ -57,11 +59,11 @@ namespace EmailService.Services
             {
                 try
                 {
-                    await client.ConnectAsync(config.SmtpServer, config.Port, true);
+                    client.ServerCertificateValidationCallback = (sender, certificate, certificateChainType, errors) => true;
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
-                    await client.AuthenticateAsync(config.UserName, config.Password);
-
-                    await client.SendAsync(mailMessage);
+                    await client.ConnectAsync(config.SmtpServer, config.Port, SecureSocketOptions.SslOnConnect).ConfigureAwait(false);
+                    await client.AuthenticateAsync(new NetworkCredential( config.From, config.Password)).ConfigureAwait(false);
+                    await client.SendAsync(mailMessage).ConfigureAwait(false);
                 }
                 catch
                 {

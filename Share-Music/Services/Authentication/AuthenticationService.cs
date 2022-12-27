@@ -3,6 +3,7 @@ using EmailService.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Share_Music.DTOs;
@@ -63,18 +64,17 @@ namespace Share_Music.Services.Authentication
             else
             {
                 CreatePasswordHash(userSignUpRequest.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
                 User newUser = mapper.Map<User>(userSignUpRequest);
                 newUser.PasswordSalt = passwordSalt;
                 newUser.PasswordHash = passwordHash;
 
                 var emailConfirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                var emailConfirmationLink = "https://localhost:7184/api/Authentication/ConfirmEmailLink?token=" + emailConfirmationToken + "&email=" + newUser.Email;
+                var emailConfirmationLink = "https://localhost:7184/api/Authentication/VerifyEmail?token=" + WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken)) + "&email=" + newUser.Email;
                 var emailConfirmationMessage = new MailKitMailMessage(new string[] { newUser.Email }, "Verification Link", emailConfirmationLink , null);
 
                 await Task.WhenAll(
-                    userRepository.CreateAsync(newUser),
-                    emailSender.SendEmailAsync(emailConfirmationMessage)
+                    emailSender.SendEmailAsync(emailConfirmationMessage),
+                    userRepository.CreateAsync(newUser)
                     );
 
                 return Response.Success(mapper.Map<UserSignUpResponseDto>(newUser), "User created successfully");
@@ -83,21 +83,11 @@ namespace Share_Music.Services.Authentication
 
         public async Task<bool> IsEmailVerified(string token, string email)
         {
-            var user = await userRepository.GetByFilterAsync(u => u.Email == email);
+            var user = await userManager.FindByEmailAsync(email);
             if (user == null)
                 return false;
-            var result = await userManager.ConfirmEmailAsync(user.First(), token);
-            if(result.Succeeded)
-            {
-                var updatedUser = user.First();
-                updatedUser.IsVerified = true;
-                await userRepository.UpdateAsync(updatedUser);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            var result = await userManager.ConfirmEmailAsync(user, Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token)));
+            return result.Succeeded;
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSlat)

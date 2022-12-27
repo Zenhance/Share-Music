@@ -8,6 +8,9 @@ namespace EmailService.Messages
 {
     public abstract class MailMessage
     {
-        
+        public MailMessage MailFactorty()
+        {
+            return this;
+        }
     }
 }

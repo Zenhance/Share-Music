@@ -30,12 +30,17 @@ builder.Services.AddDbContext<MusicDbContext>(options =>
         builder.Configuration.GetConnectionString("musicDbDev"),
         providerOptions => providerOptions.EnableRetryOnFailure())
 );
-builder.Services.AddIdentity<User,IdentityRole> (option => {
+builder.Services.AddIdentity<User,IdentityRole<Guid>> (option => {
     option.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
 })
     .AddEntityFrameworkStores<MusicDbContext>()
     .AddDefaultTokenProviders()
     .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+    opt.TokenLifespan = TimeSpan.FromHours(2));
+builder.Services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
+    opt.TokenLifespan = TimeSpan.FromDays(3));
 
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(BaseRepository<>));
