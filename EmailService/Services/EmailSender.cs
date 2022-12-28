@@ -18,14 +18,14 @@ namespace EmailService.Services
             this.config = config;
         }
 
-        public async Task SendEmailAsync(MailKitMailMessage message)
+        public async Task SendEmailAsync(MailKitMessage message)
         {
             var mailMessage = CreateEmailMessage(message);
 
             await SendAsync(mailMessage);
         }
 
-        private MimeMessage CreateEmailMessage(MailKitMailMessage message)
+        private MimeMessage CreateEmailMessage(MailKitMessage message)
         {
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress(config.UserName,config.From));

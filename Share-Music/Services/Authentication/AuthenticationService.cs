@@ -5,7 +5,6 @@ using MapsterMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using Share_Music.DTOs;
 using Share_Music.DTOs.Login;
 using Share_Music.DTOs.Register;
@@ -70,7 +69,7 @@ namespace Share_Music.Services.Authentication
 
                 var emailConfirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 var emailConfirmationLink = "https://localhost:7184/api/Authentication/VerifyEmail?token=" + WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(emailConfirmationToken)) + "&email=" + newUser.Email;
-                var emailConfirmationMessage = new MailKitMailMessage(new string[] { newUser.Email }, "Verification Link", emailConfirmationLink , null);
+                var emailConfirmationMessage = new MailKitMessage(new string[] { newUser.Email }, "Verification Link", emailConfirmationLink , null);
 
                 await Task.WhenAll(
                     emailSender.SendEmailAsync(emailConfirmationMessage),

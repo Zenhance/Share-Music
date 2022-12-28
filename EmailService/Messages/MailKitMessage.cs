@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EmailService.Messages
 {
-    public class MailKitMailMessage
+    public class MailKitMessage:MailMessage
     {
         public List<MailboxAddress> To { get; set; }
         public string? Name { get; set; }
@@ -17,7 +17,7 @@ namespace EmailService.Messages
 
         public IFormFileCollection Attachments { get; set; }
 
-        public MailKitMailMessage(IEnumerable<string> to, string subject, string content, IFormFileCollection attachments)
+        public MailKitMessage(IEnumerable<string> to, string subject, string content, IFormFileCollection attachments)
         {
             To = new List<MailboxAddress>();
             To.AddRange(to.Select(x => new MailboxAddress(Name,x)));

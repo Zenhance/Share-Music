@@ -4,6 +4,6 @@ namespace EmailService.Services
 {
     public interface IEmailSender
     {
-        Task SendEmailAsync(MailKitMailMessage message);
+        Task SendEmailAsync(MailKitMessage message);
     }
 }
