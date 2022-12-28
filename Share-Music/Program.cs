@@ -19,7 +19,8 @@ var builder = WebApplication.CreateBuilder(args);
 var mappingConfig = TypeAdapterConfig.GlobalSettings;
 mappingConfig.Scan(Assembly.GetExecutingAssembly());
 
-var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailMailKitConfiguration>();
+var mailKitConfig = builder.Configuration.GetSection("EmailConfiguration:MailKitConfiguration").Get<MailKitConfiguration>();
+var sendGridConfig = builder.Configuration.GetSection("EmailConfiguration:SendGridConfiguration").Get<SendGridConfiguration>();
 
 
 // Add services to the container.
@@ -46,7 +47,8 @@ builder.Services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
 builder.Services.AddTransient(typeof(IRepository<>), typeof(BaseRepository<>));
 
 builder.Services.AddSingleton(mappingConfig);
-builder.Services.AddSingleton(emailConfig);
+builder.Services.AddSingleton(mailKitConfig);
+builder.Services.AddSingleton(sendGridConfig);
 
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

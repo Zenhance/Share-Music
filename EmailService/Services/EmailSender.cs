@@ -11,16 +11,16 @@ namespace EmailService.Services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly EmailMailKitConfiguration config;
+        private readonly MailKitConfiguration config;
 
-        public EmailSender(EmailMailKitConfiguration config)
+        public EmailSender(MailKitConfiguration config)
         {
             this.config = config;
         }
 
-        public async Task SendEmailAsync(MailKitMessage message)
+        public async Task SendEmailAsync(MailMessage message)
         {
-            var mailMessage = CreateEmailMessage(message);
+            var mailMessage = CreateEmailMessage((MailKitMessage)message);
 
             await SendAsync(mailMessage);
         }

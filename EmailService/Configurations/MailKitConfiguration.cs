@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmailService.Configurations
 {
-    public class EmailMailKitConfiguration
+    public class MailKitConfiguration
     {
         public string From { get; set; } = String.Empty;
         public string SmtpServer { get; set; } = String.Empty;
