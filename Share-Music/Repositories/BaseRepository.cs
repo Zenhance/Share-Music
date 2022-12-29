@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Share_Music.Data;
 using Share_Music.Models;
 using System.Linq.Expressions;
 
 namespace Share_Music.Repositories
 {
-    public class BaseRepository<T> : IRepository<T> where T : class
+    public class BaseRepository<T> : IRepository<T> where T : IdentityUser<Guid>, DbEntity
     {
         private readonly MusicDbContext musicDbContext;
 

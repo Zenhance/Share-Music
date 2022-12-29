@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Share_Music.Models
 {
-    public class User:IdentityUser<Guid>,DbEntity
+    public class User:IdentityUser<Guid>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
